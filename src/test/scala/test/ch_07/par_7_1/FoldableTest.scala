@@ -1,5 +1,6 @@
-package test.ch_06.par_7_1
+package test.ch_07.par_7_1
 
+import test.utility.Utility._
 import org.scalatest.FunSuite
 
 class FoldableTest extends FunSuite {
@@ -57,9 +58,9 @@ class FoldableTest extends FunSuite {
   }
 
   test("traverse") {
+    import scala.concurrent.ExecutionContext.Implicits.global
     import scala.concurrent._
     import scala.concurrent.duration._
-    import scala.concurrent.ExecutionContext.Implicits.global
 
     val hostnames = List(
       "alpha.example.com",
@@ -88,23 +89,13 @@ class FoldableTest extends FunSuite {
 
   test("serialiseFutures") {
 
+    import scala.concurrent.ExecutionContext.Implicits.global
     import scala.concurrent._
     import scala.concurrent.duration._
-    import scala.concurrent.ExecutionContext.Implicits.global
 
     val list = List(1, 2, 3, 4, 5, 6)
     val listPlusOne = list.map(_ + 1)
     val sleep = 100
-
-    def serialiseFutures[A, B](l: Iterable[A])(fn: A => Future[B]): Future[List[B]] =
-      l.foldLeft(Future(List.empty[B])) {
-        (previousFuture, next) =>
-          for {
-            previousResults <- previousFuture
-            next <- fn(next)
-          } yield previousResults :+ next
-      }
-
 
     def t1 = serialiseFutures(list) { i =>
       Future {

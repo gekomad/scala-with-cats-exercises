@@ -1,4 +1,5 @@
-package test.ch_06.par_7_2_2_1
+package test.ch_07.par_7_2_2_1
+
 
 
 import org.scalatest.FunSuite

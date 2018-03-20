@@ -4,6 +4,7 @@ target
 tmp
 dist
 /.idea
+*.log
 /*.iml
 /out
 /.idea_modules

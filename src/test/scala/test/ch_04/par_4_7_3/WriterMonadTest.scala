@@ -4,7 +4,6 @@ import cats.Id
 import cats.data.WriterT
 import org.scalatest.FunSuite
 
-
 class WriterMonadTest extends FunSuite {
 
   test("factorial writer") {
@@ -47,10 +46,7 @@ class WriterMonadTest extends FunSuite {
     assert(res == 120)
 
     val Vector((logA, ansA), (logB, ansB)) =
-      Await.result(Future.sequence(Vector(
-        Future(factorial(3).run),
-        Future(factorial(5).run)
-      )), Duration.Inf)
+      Await.result(Future.sequence(Vector(Future(factorial(3).run), Future(factorial(5).run))), Duration.Inf)
 
     assert(logA == Vector("fact 0 1", "fact 1 1", "fact 2 2", "fact 3 6"))
     assert(logB == Vector("fact 0 1", "fact 1 1", "fact 2 2", "fact 3 6", "fact 4 24", "fact 5 120"))

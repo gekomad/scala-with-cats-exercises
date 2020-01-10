@@ -1,25 +1,20 @@
 package test.ch_07.par_7_2_2_1
 
-
-
 import org.scalatest.FunSuite
 
 class TraverseTest extends FunSuite {
 
   import cats.instances.vector._
-  import scala.language.higherKinds
   import cats.syntax.apply._ // for mapN
   import cats.Applicative
   import cats.syntax.applicative._ // for pure
 
-  def listTraverse[F[_] : Applicative, A, B]
-  (list: List[A])(func: A => F[B]): F[List[B]] =
+  def listTraverse[F[_]: Applicative, A, B](list: List[A])(func: A => F[B]): F[List[B]] =
     list.foldLeft(List.empty[B].pure[F]) { (accum, item) =>
       (accum, func(item)).mapN(_ :+ _)
     }
 
-  def listSequence[F[_] : Applicative, B]
-  (list: List[F[B]]): F[List[B]] = listTraverse(list)(identity)
+  def listSequence[F[_]: Applicative, B](list: List[F[B]]): F[List[B]] = listTraverse(list)(identity)
 
   test("7.2.2.1 Traversing with Vectors") {
 
@@ -48,7 +43,8 @@ class TraverseTest extends FunSuite {
 
     def process(inputs: List[Int]): ErrorsOr[List[Int]] =
       listTraverse(inputs) { n =>
-        if (n % 2 == 0) Validated.valid(n) else
+        if (n % 2 == 0) Validated.valid(n)
+        else
           Validated.invalid(List(s"$n is not even"))
       }
 

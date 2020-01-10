@@ -1,6 +1,5 @@
 package test.ch_06.par_6_3_1_1
 
-
 import org.scalatest.FunSuite
 
 class SemigroupTest extends FunSuite {
@@ -17,21 +16,13 @@ class SemigroupTest extends FunSuite {
     }
 
     {
-      val l: Option[Cat] = (
-        Option("Garfield"),
-        Option(Some(1978)),
-        Option("Orange & black")
-      ).mapN(Cat.apply)
+      val l: Option[Cat] = (Option("Garfield"), Option(Some(1978)), Option("Orange & black")).mapN(Cat.apply)
 
       assert(l == Some(Cat("Garfield", Some(1978), "Orange & black")))
     }
 
     {
-      val l: Option[Cat] = (
-        Option("Garfield"),
-        None,
-        Option("Orange & black")
-      ).mapN(Cat.apply)
+      val l: Option[Cat] = (Option("Garfield"), None, Option("Orange & black")).mapN(Cat.apply)
 
       assert(l == None)
     }
@@ -52,11 +43,7 @@ class SemigroupTest extends FunSuite {
 
     val unapply1: Cat => (String, Int, List[String]) = cat => (cat.name, cat.yearOfBirth, cat.favoriteFoods)
 
-    implicit val catMonoid: Monoid[Cat] = (
-      Monoid[String],
-      Monoid[Int],
-      Monoid[List[String]]
-    ).imapN(apply1)(unapply1)
+    implicit val catMonoid: Monoid[Cat] = (Monoid[String], Monoid[Int], Monoid[List[String]]).imapN(apply1)(unapply1)
 
     import cats.syntax.semigroup._ // for |+|
 
@@ -79,11 +66,10 @@ class SemigroupTest extends FunSuite {
     import scala.concurrent.ExecutionContext.Implicits.global
     import scala.concurrent._
     import scala.concurrent.duration._
-    import scala.language.higherKinds
 
     {
       val futurePair: Future[(String, Int)] = Semigroupal[Future].product(Future("Hello"), Future(123))
-      val d = Await.result(futurePair, 1.second)
+      val d                                 = Await.result(futurePair, 1.second)
       assert(d == ("Hello", 123))
     }
 
@@ -94,12 +80,8 @@ class SemigroupTest extends FunSuite {
 
     {
       final case class Cat(name: String, yearOfBirth: Int, favoriteFoods: List[String])
-      val futureCat = (
-        Future("Garfield"),
-        Future(1978),
-        Future(List("Lasagne"))
-      ).mapN(Cat.apply)
-      val o: Cat = Await.result(futureCat, Duration.Inf)
+      val futureCat = (Future("Garfield"), Future(1978), Future(List("Lasagne"))).mapN(Cat.apply)
+      val o: Cat    = Await.result(futureCat, Duration.Inf)
       assert(o == Cat("Garfield", 1978, List("Lasagne")))
     }
   }
@@ -109,9 +91,7 @@ class SemigroupTest extends FunSuite {
     import cats.syntax.flatMap._
     import cats.syntax.functor._
 
-    import scala.language.higherKinds
-
-    def product[M[_] : Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
+    def product[M[_]: Monad, A, B](x: M[A], y: M[B]): M[(A, B)] =
       for {
         a <- x
         b <- y
@@ -125,10 +105,7 @@ class SemigroupTest extends FunSuite {
 
     type ErrorOr[A] = Either[Vector[String], A]
 
-    val b = product[ErrorOr, Int, Int](
-      Left(Vector("Error 1")),
-      Left(Vector("Error 2"))
-    )
+    val b = product[ErrorOr, Int, Int](Left(Vector("Error 1")), Left(Vector("Error 2")))
     assert(b == Left(Vector("Error 1")))
 
   }

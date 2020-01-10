@@ -2,7 +2,7 @@ package test.ch_11
 
 import org.scalatest.FunSuite
 
-class BoundedSemiLattice extends FunSuite {
+class BoundedSemiLatticeTest extends FunSuite {
 
   test("11.2.3") {
     final case class GCounter(counters: Map[String, Int]) {

@@ -8,7 +8,6 @@ import org.scalatest.FunSuite
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Future, _}
-import scala.language.higherKinds
 
 class AbstractTypeConstructorsTest extends FunSuite {
 
@@ -40,7 +39,7 @@ class AbstractTypeConstructorsTest extends FunSuite {
 
   test("8.2") {
 
-    class UptimeService[F[_] : Applicative](client: UptimeClient[F]) {
+    class UptimeService[F[_]: Applicative](client: UptimeClient[F]) {
       def getTotalUptime(hostnames: List[String]): F[Int] =
         hostnames.traverse(client.getUptime).map(_.sum)
     }
@@ -57,7 +56,7 @@ class AbstractTypeConstructorsTest extends FunSuite {
     // prod
     {
 
-      val s = new RealUptimeClient(map)
+      val s  = new RealUptimeClient(map)
       val r2 = (new UptimeService[Future](s)).getTotalUptime(List("b", "a", "a"))
       assert(Await.result(r2, Duration.Inf) == 4)
     }

@@ -60,10 +60,10 @@ class TestSyntax extends FunSuite {
 
     implicit val catPrintable = new Printable[Cat] {
       def format(cat: Cat) = {
-        val name = Printable.theFormat(cat.name)
-        val age = Printable.theFormat(cat.age)
+        val name  = Printable.theFormat(cat.name)
+        val age   = Printable.theFormat(cat.age)
         val color = Printable.theFormat(cat.color)
-        val d = Printable.theFormat(cat.datetime)
+        val d     = Printable.theFormat(cat.datetime)
         s"$name is a $age year-old $color cat. date $d"
       }
     }

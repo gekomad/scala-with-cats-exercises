@@ -9,11 +9,11 @@ import org.scalatest.FunSuite
   val         Now       eager, memoized
   lazy val    Later     lazy, momoized
   def         Always    lazy, not momoized
-* */
+ * */
 
 object Fact {
   def factorialIterative(n: BigInt): BigInt = {
-    var i = n
+    var i         = n
     var a: BigInt = 1
     while (i > 0) {
       a = a * i
@@ -35,8 +35,8 @@ class TrampolineTest extends FunSuite {
   val standardConfig = config(
     Key.exec.minWarmupRuns -> 20,
     Key.exec.maxWarmupRuns -> 100,
-    Key.exec.benchRuns -> 100,
-    Key.verbose -> false
+    Key.exec.benchRuns     -> 100,
+    Key.verbose            -> false
   ) withWarmer new Warmer.Default
 
   ignore("Safer Folding using Eval") {
@@ -46,7 +46,7 @@ class TrampolineTest extends FunSuite {
     lazy val classic = {
       var res = 0L
       val time = standardConfig measure {
-        res = (1 to N).toList.foldRight(0l)((a, b) => a + b)
+        res = (1 to N).toList.foldRight(0L)(_ + _)
       }
       (res, time)
     }
@@ -61,7 +61,7 @@ class TrampolineTest extends FunSuite {
       }
 
       val time = standardConfig measure {
-        res = foldRightSafer((1 to N).toList, 0l)((a, b) => a + b).value
+        res = foldRightSafer((1 to N).toList, 0L)(_ + _).value
       }
       (res, time)
     }
@@ -82,12 +82,10 @@ class TrampolineTest extends FunSuite {
           b.map(fn(a, _))
         }.value
 
-
       val time = {
         standardConfig measure {
           res = foldRight((1 to N).toList, 0L)(_ + _)
         }
-
 
       }
       (res, time)
@@ -131,6 +129,5 @@ class TrampolineTest extends FunSuite {
       assert(res1 == res2)
     }
   }
-
 
 }

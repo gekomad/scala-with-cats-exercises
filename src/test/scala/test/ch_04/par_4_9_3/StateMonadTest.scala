@@ -62,26 +62,33 @@ class StateMonadTest extends FunSuite {
     //      }
 
     def evalOne(sym: String): State[List[Int], Int] = sym match {
-      case "+" => State[List[Int], Int] { s =>
-        (s.head + s.tail.head :: s.tail, s.head + s.tail.head)
-      }
-      case "-" => State[List[Int], Int] { s =>
-        (s.head - s.tail.head :: s.tail, s.head - s.tail.head)
-      }
-      case "*" => State[List[Int], Int] { s =>
-        (s.head * s.tail.head :: s.tail, s.head * s.tail.head)
-      }
-      case "/" => State[List[Int], Int] { s =>
-        (s.head / s.tail.head :: s.tail, s.head / s.tail.head)
-      }
-      case v => State[List[Int], Int] { s => (v.toInt :: s, v.toInt) }
+      case "+" =>
+        State[List[Int], Int] { s =>
+          (s.head + s.tail.head :: s.tail, s.head + s.tail.head)
+        }
+      case "-" =>
+        State[List[Int], Int] { s =>
+          (s.head - s.tail.head :: s.tail, s.head - s.tail.head)
+        }
+      case "*" =>
+        State[List[Int], Int] { s =>
+          (s.head * s.tail.head :: s.tail, s.head * s.tail.head)
+        }
+      case "/" =>
+        State[List[Int], Int] { s =>
+          (s.head / s.tail.head :: s.tail, s.head / s.tail.head)
+        }
+      case v =>
+        State[List[Int], Int] { s =>
+          (v.toInt :: s, v.toInt)
+        }
     }
 
     assert(42 == evalOne("42").runA(Nil).value)
 
     val program = for {
-      _ <- evalOne("1")
-      _ <- evalOne("2")
+      _   <- evalOne("1")
+      _   <- evalOne("2")
       ans <- evalOne("+")
     } yield ans
 
@@ -99,8 +106,8 @@ class StateMonadTest extends FunSuite {
     assert(evalAll(List()).runA(Nil).value == 0)
 
     val program3 = for {
-      _ <- evalAll(List("1", "2", "+"))
-      _ <- evalAll(List("3", "4", "+"))
+      _   <- evalAll(List("1", "2", "+"))
+      _   <- evalAll(List("3", "4", "+"))
       ans <- evalOne("*")
     } yield ans
     assert(program3.run(Nil).value == (List(21, 3, 3, 1), 21))

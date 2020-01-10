@@ -6,15 +6,10 @@ import org.scalatest.FunSuite
 class FoldableTest extends FunSuite {
 
   test("7.1.2 Exercise: Reflec ng on Folds") {
-
     val ll = List(1, 2, 3).foldLeft(List[Int]())((accum, item) => item :: accum)
-
     val lr = List(1, 2, 3).foldRight(List[Int]())((item, accum) => item :: accum)
-
     assert(ll == List(3, 2, 1))
-
     assert(lr == List(1, 2, 3))
-
   }
 
   test("7.1.3 Exercise: Scaffolding Other Methods") {
@@ -45,13 +40,13 @@ class FoldableTest extends FunSuite {
 
     {
       val maybeInt = None: Option[Int]
-      val d = Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
+      val d        = Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
       assert(10 == d)
     }
 
     {
       val maybeInt = Option(123)
-      val d = Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
+      val d        = Foldable[Option].foldLeft(maybeInt, 10)(_ * _)
       assert(1230 == d)
     }
 
@@ -62,28 +57,22 @@ class FoldableTest extends FunSuite {
     import scala.concurrent._
     import scala.concurrent.duration._
 
-    val hostnames = List(
-      "alpha.example.com",
-      "beta.example.com",
-      "gamma.demo.com"
-    )
+    val hostnames = List("alpha.example.com", "beta.example.com", "gamma.demo.com")
 
     def getUptime(hostname: String): Future[Int] =
       Future(hostname.length * 60) // just for demonstration
 
-
-    val allUptimes: Future[List[Int]] = hostnames.foldLeft(Future(List.empty[Int])) {
-      (accum, host) =>
-        val uptime: Future[Int] = getUptime(host)
-        for {
-          accum <- accum
-          uptime <- uptime
-        } yield accum :+ uptime
+    val allUptimes: Future[List[Int]] = hostnames.foldLeft(Future(List.empty[Int])) { (accum, host) =>
+      val uptime: Future[Int] = getUptime(host)
+      for {
+        accum  <- accum
+        uptime <- uptime
+      } yield accum :+ uptime
     }
 
-    val o = Await.result(allUptimes, 1.second)
+    val o                              = Await.result(allUptimes, 1.second)
     val allUptimes2: Future[List[Int]] = Future.traverse(hostnames)(getUptime)
-    val s = Await.result(allUptimes2, 1.second)
+    val s                              = Await.result(allUptimes2, 1.second)
     assert(o == s)
   }
 
@@ -93,9 +82,9 @@ class FoldableTest extends FunSuite {
     import scala.concurrent._
     import scala.concurrent.duration._
 
-    val list = List(1, 2, 3, 4, 5, 6)
+    val list        = List(1, 2, 3, 4, 5, 6)
     val listPlusOne = list.map(_ + 1)
-    val sleep = 100
+    val sleep       = 100
 
     def t1 = serialiseFutures(list) { i =>
       Future {
@@ -103,7 +92,6 @@ class FoldableTest extends FunSuite {
         i + 1
       }
     }
-
 
     {
       val start = System.currentTimeMillis
@@ -123,7 +111,6 @@ class FoldableTest extends FunSuite {
       assert(listPlusOne == d3)
       assert(timeElapsed > list.size * sleep && timeElapsed < (list.size + 1) * sleep)
     }
-
 
   }
 

@@ -1,14 +1,13 @@
 package test.ch_02.par_2_5_4
 
 import org.scalatest.FunSuite
-
 import scala.collection.immutable
 
 class MonoidTest extends FunSuite {
 
   test("sum two option") {
     val a: Option[Int] = Option(1)
-    val b = None
+    val b              = None
     val c: Option[Int] = a.map(_ + b.getOrElse(0))
     assert(c == Option(1))
   }
@@ -21,12 +20,11 @@ class MonoidTest extends FunSuite {
     assert(c == None)
   }
 
-
   test("sum Option list") {
     val a: List[Option[Int]] = List(Option(1), None)
 
     val c = a.foldLeft(Option(0)) { (a, b) =>
-      val p = a.getOrElse(0)
+      val p  = a.getOrElse(0)
       val p2 = b.getOrElse(0)
       Some(p + p2)
     }
@@ -37,7 +35,7 @@ class MonoidTest extends FunSuite {
     val a: List[Option[Int]] = List(None, None)
 
     val c = a.foldLeft(Option(0)) { (a, b) =>
-      val p = a.getOrElse(0)
+      val p  = a.getOrElse(0)
       val p2 = b.getOrElse(0)
       Some(p + p2)
     }
@@ -63,18 +61,16 @@ class MonoidTest extends FunSuite {
     import cats.syntax.semigroup._ // for |+|
 
     val a: Option[Int] = None
-    val b = None
-    val c = a |+| b
+    val b              = None
+    val c              = a |+| b
     assert(c == None)
   }
-
 
   test("sum option monoid list") {
     import cats.Monoid
     import cats.instances.int._
     import cats.instances.option._
     import cats.syntax.semigroup._ // for |+|
-
 
     def add[A](items: List[A])(implicit monoid: Monoid[A]): A = items.foldLeft(monoid.empty)(_ |+| _)
 
@@ -83,7 +79,7 @@ class MonoidTest extends FunSuite {
 
     val a: List[Option[Int]] = List(Option(1), None)
 
-    val c = add(a)
+    val c  = add(a)
     val c2 = add2(a)
 
     assert(c == Option(1))
@@ -98,10 +94,7 @@ class MonoidTest extends FunSuite {
 
     implicit val monoid: Monoid[Order] = new Monoid[Order] {
       def combine(o1: Order, o2: Order) =
-        Order(
-          o1.totalCost + o2.totalCost,
-          o1.quantity + o2.quantity
-        )
+        Order(o1.totalCost + o2.totalCost, o1.quantity + o2.quantity)
 
       def empty = Order(0, 0)
     }
@@ -114,7 +107,7 @@ class MonoidTest extends FunSuite {
     //    val a: List[Option[Int]] = List(Option(1), None)
     val a: List[Order] = List(Order(1, 2), Order(4, 5))
 
-    val c = add(a)
+    val c  = add(a)
     val c2 = add2(a)
 
     assert(c == Order(5, 7))
@@ -130,10 +123,7 @@ class MonoidTest extends FunSuite {
 
     implicit val monoid: Monoid[Order] = new Monoid[Order] {
       def combine(o1: Order, o2: Order) =
-        Order(
-          o1.totalCost + o2.totalCost,
-          o1.quantity + o2.quantity
-        )
+        Order(o1.totalCost + o2.totalCost, o1.quantity + o2.quantity)
 
       def empty = Order(0, 0)
     }
@@ -143,28 +133,26 @@ class MonoidTest extends FunSuite {
     // alternatives
     def add2[A: Monoid](items: List[A]): A = items.foldLeft(Monoid[A].empty)(_ |+| _)
 
-    //    val a: List[Option[Int]] = List(Option(1), None)
     val a: List[Option[Order]] = List(Some(Order(1, 2)), Some(Order(4, 5)), None)
 
-    val c = add(a)
+    val c  = add(a)
     val c2 = add2(a)
 
-
-    assert(c2 == Some(Order(5, 7)))
+    assert(c == Some(Order(5, 7)))
     assert(c2 == Some(Order(5, 7)))
   }
 
-
   test("Monad test") {
-    import scala.language.higherKinds
+
     import cats.Monad
     import cats.syntax.functor._
     import cats.syntax.flatMap._
 
-    def ff[M[_] : Monad](a: M[Int], b: M[Int], f: (Int, Int) => Int): M[Int] = for {
-      x <- a
-      y <- b
-    } yield f(x, y)
+    def ff[M[_]: Monad](a: M[Int], b: M[Int], f: (Int, Int) => Int): M[Int] =
+      for {
+        x <- a
+        y <- b
+      } yield f(x, y)
 
     import cats.instances.option._
     import cats.instances.list._

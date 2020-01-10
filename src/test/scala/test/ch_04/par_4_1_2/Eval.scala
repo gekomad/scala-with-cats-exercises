@@ -8,7 +8,7 @@ class Eval extends FunSuite {
     val         Now       eager, memoized
     lazy val    Later     lazy, momoized
     def         Always    lazy, not momoized
-  * */
+   * */
   test("eval2") {
     import cats.Eval
 
@@ -77,6 +77,5 @@ class Eval extends FunSuite {
     val p2 = m
     assert(tot == 1)
   }
-
 
 }

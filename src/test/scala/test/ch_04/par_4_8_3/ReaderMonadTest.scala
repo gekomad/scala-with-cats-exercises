@@ -13,26 +13,23 @@ class ReaderMonadTest extends FunSuite {
 
     def findUsername(userId: Int): DbReader[Option[String]] = Reader(db => db.usernames.get(userId))
 
-    def checkPassword(username: String, password: String): DbReader[Boolean] = Reader(db => db.passwords.get(username).contains(password))
+    def checkPassword(username: String, password: String): DbReader[Boolean] =
+      Reader(db => db.passwords.get(username).contains(password))
 
-    def checkLogin(userId: Int, password: String): DbReader[Boolean] = for {
-      username <- findUsername(userId)
-      passwordOk <- username.map(u => checkPassword(u, password)).getOrElse(false.pure[DbReader])
-    } yield passwordOk
+    def checkLogin(userId: Int, password: String): DbReader[Boolean] =
+      for {
+        username   <- findUsername(userId)
+        passwordOk <- username.map(u => checkPassword(u, password)).getOrElse(false.pure[DbReader])
+      } yield passwordOk
 
+    val db = Db(
+      usernames = Map(1      -> "dade", 2          -> "kate", 3           -> "margo"),
+      passwords = Map("dade" -> "zerocool", "kate" -> "acidburn", "margo" -> "secret")
+    )
 
-    val db = Db(usernames = Map(
-      1 -> "dade",
-      2 -> "kate",
-      3 -> "margo"
-    ), passwords = Map(
-      "dade" -> "zerocool",
-      "kate" -> "acidburn",
-      "margo" -> "secret"))
+    assert(checkLogin(1, "zerocool").run(db))
 
-    assert(checkLogin(1, "zerocool").run(db) == true)
-
-    assert(checkLogin(4, "davinci").run(db) == false)
+    assert(!checkLogin(4, "davinci").run(db))
 
   }
 

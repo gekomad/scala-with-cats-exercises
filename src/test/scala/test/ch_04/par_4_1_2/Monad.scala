@@ -5,7 +5,6 @@ import org.scalatest.FunSuite
 class Monad extends FunSuite {
 
   test("monad1") {
-    import scala.language.higherKinds
 
     trait Monad[F[_]] {
       def pure[A](a: A): F[A]
@@ -21,7 +20,7 @@ class Monad extends FunSuite {
   test("monad2") {
     import cats.Monad
     import cats.instances.option._ // for Monad
-    import cats.instances.list._ // for Monad
+    import cats.instances.list._   // for Monad
 
     val opt1 = Monad[Option].pure(3)
     assert(opt1 == Option(3))
@@ -43,8 +42,8 @@ class Monad extends FunSuite {
   }
 
   test("monad3") {
-    import cats.instances.option._ // for Monad
-    import cats.instances.list._ // for Monad
+    import cats.instances.option._   // for Monad
+    import cats.instances.list._     // for Monad
     import cats.syntax.applicative._ // for pure
     import scala.concurrent.ExecutionContext.Implicits.global
     import cats.Monad
@@ -60,7 +59,7 @@ class Monad extends FunSuite {
 
     {
       val o: Future[Int] = 1.pure[Future]
-      val p = Await.result(o, Duration.Inf)
+      val p              = Await.result(o, Duration.Inf)
       assert(p == 1)
     }
 
@@ -68,10 +67,9 @@ class Monad extends FunSuite {
       val fm = Monad[Future]
 
       val future = fm.flatMap(fm.pure(1))(x => fm.pure(x + 2))
-      val p = Await.result(future, 1.second)
+      val p      = Await.result(future, 1.second)
       assert(p == 3)
     }
-
 
   }
 }

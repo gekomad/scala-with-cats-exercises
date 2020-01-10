@@ -5,14 +5,13 @@ import org.scalatest.FunSuite
 class IdMonadTest extends FunSuite {
 
   test("identity") {
-    import scala.language.higherKinds
 
     import cats.syntax.functor._ // for map
     import cats.syntax.flatMap._ // for flatMap
 
     import cats.Monad
 
-    def sumSquare[F[_] : Monad](a: F[Int], b: F[Int]): F[Int] =
+    def sumSquare[F[_]: Monad](a: F[Int], b: F[Int]): F[Int] =
       for {
         x <- a
         y <- b

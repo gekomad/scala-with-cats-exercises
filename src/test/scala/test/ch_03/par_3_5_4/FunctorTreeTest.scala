@@ -33,11 +33,11 @@ class FunctorTreeTest extends FunSuite {
     }
     import Tree._
     val m: Tree[Int] = branch(branch(leaf(1), leaf(2)), leaf(3))
-    val p = m.map(_ * 2)
+    val p            = m.map(_ * 2)
     assert(p == Branch(Branch(Leaf(2), Leaf(4)), Leaf(6)))
 
     val o: Tree[Int] = Branch(Leaf(10), Leaf(20))
-    val x = o.map(_ * 2)
+    val x            = o.map(_ * 2)
     assert(x == Branch(Leaf(20), Leaf(40)))
 
     val p1: Tree[Int] = leaf(100).map(_ * 2)

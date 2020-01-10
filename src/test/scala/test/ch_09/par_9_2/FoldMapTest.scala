@@ -1,10 +1,5 @@
 package test.ch_09.par_9_2
 
-
-import java.util.concurrent.ForkJoinTask
-
-import test.utility.Utility._
-import org.scalameter.{Key, Warmer, config}
 import org.scalatest.FunSuite
 
 class FoldMapTest extends FunSuite {
@@ -13,7 +8,6 @@ class FoldMapTest extends FunSuite {
   import cats.instances.int._
   import cats.instances.string._
   import cats.syntax.semigroup._ // for Monoid
-
 
   test("foldMap") {
 
@@ -45,18 +39,18 @@ class FoldMapTest extends FunSuite {
     import scala.concurrent.duration._
 
     def parallelFoldMap[A, B: Monoid](values: Vector[A])(func: A => B): Future[B] = {
-      val groupSize = (1.0 * values.size / Runtime.getRuntime.availableProcessors).ceil.toInt
-      val batches: Iterator[Vector[A]] = values.grouped(groupSize)
+      val groupSize                        = (1.0 * values.size / Runtime.getRuntime.availableProcessors).ceil.toInt
+      val batches: Iterator[Vector[A]]     = values.grouped(groupSize)
       val batchesPerCPU: Future[Vector[B]] = batches.toVector.traverse(group => Future(group.foldMap(func)))
-      val l: Future[B] = batchesPerCPU.map(_.combineAll)
+      val l: Future[B]                     = batchesPerCPU.map(_.combineAll)
       l
     }
 
     val list = (1 to 1000).toVector
-    
+
     var res = list.foldLeft("")(_ + _ + "!")
 
-    assert(Await.result(parallelFoldMap(list)((a) => a + "!"), Duration.Inf) == res)
+    assert(Await.result(parallelFoldMap(list)(a => s"$a!"), Duration.Inf) == res)
 
   }
 

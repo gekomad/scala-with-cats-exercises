@@ -1,14 +1,11 @@
 package test.ch_03.par_3_5
 
-
 import org.scalatest.FunSuite
-
 import scala.collection.immutable
 
 class FunctorTest extends FunSuite {
 
   test("examples") {
-    import scala.language.higherKinds // or add to build.sbt: scalacOptions += "-language:higherKinds"
     import cats.Functor
     import cats.instances.list._
 
@@ -28,7 +25,6 @@ class FunctorTest extends FunSuite {
     val option2 = Functor[Option].map(option1)(_.toString)
     assert(option2 == Some("123"))
 
-
     import cats.instances.option._
 
     //    def func(x: Int) = x + 1
@@ -36,7 +32,7 @@ class FunctorTest extends FunSuite {
 
     val liftedFunc: Option[Int] => Option[Int] = Functor[Option].lift(func)
 
-    val o: Option[Int] = liftedFunc(Option(1))
+    val o: Option[Int]  = liftedFunc(Option(1))
     val o2: Option[Int] = liftedFunc(None)
 
     assert(o == Some(2))
@@ -45,22 +41,21 @@ class FunctorTest extends FunSuite {
 
   test("functor syntax") {
     import cats.instances.function._ // for Functor
-    import cats.syntax.functor._ // for map
+    import cats.syntax.functor._     // for map
 
-    val func1 = (a: Int) => a + 1
-    val func2 = (a: Int) => a * 2
-    val func3 = (a: Int) => a + "!"
-    val func4 = func1.map(func2).map(func3)
+    val func1     = (a: Int) => a + 1
+    val func2     = (a: Int) => a * 2
+    val func3     = (a: Int) => s"$a!"
+    val func4     = func1.map(func2).map(func3)
     val r: String = func4(123)
     assert(r == "248!")
   }
 
   test("abstract functor") {
-    import cats.syntax.functor._ // for map
+    import cats.syntax.functor._   // for map
     import cats.instances.option._ // for Functor
-    import cats.instances.list._ // for Functor
+    import cats.instances.list._   // for Functor
     import cats.Functor
-    import scala.language.higherKinds // or add to build.sbt: scalacOptions += "-language:higherKinds"
 
     def doMath[F[_]](start: F[Int])(implicit functor: Functor[F]): F[Int] = start.map(n => n + 1 * 2)
 
@@ -77,7 +72,6 @@ class FunctorTest extends FunSuite {
     import cats.instances.option._
     import cats.instances.list._
 
-
     val opt1: Option[Int] = Monad[Option].pure(3)
 
     val opt0 = opt1.flatMap(a => Some(a + 2))
@@ -87,9 +81,8 @@ class FunctorTest extends FunSuite {
 
     val list1 = Monad[List].pure(3)
 
-    val list2 = Monad[List].flatMap(List(1, 2, 3))(x => List(x, x * 10))
+    val list2  = Monad[List].flatMap(List(1, 2, 3))(x => List(x, x * 10))
     val list22 = Monad[List].flatMap(List(1, 2, 3))(x => List(x + 1))
-
 
     val list2u2 = List(1, 2, 3).flatMap(x => List(x + 1))
 
@@ -102,12 +95,9 @@ class FunctorTest extends FunSuite {
 
     val fm = Monad[Future]
 
-    val pp = Await.result(
-      Monad[Future].flatMap(fm.pure(1)) { x =>
-        fm.pure(x + 2)
-      },
-      1.second
-    )
+    val pp = Await.result(Monad[Future].flatMap(fm.pure(1)) { x =>
+      fm.pure(x + 2)
+    }, 1.second)
     assert(pp == 3)
   }
 }
